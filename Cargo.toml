@@ -1,0 +1,31 @@
+[package]
+name = "doommetal-rust"
+version = "0.1.0"
+edition = "2021"
+license = "GPL-2.0-only"
+description = "Rust port of DoomMetal, a classic id Software DOOM engine source tree."
+
+[dependencies]
+# Linked against the system SDL2 (found via pkg-config), matching the
+# original CMakeLists.txt's find_package(SDL2 REQUIRED) more closely
+# than the "bundled"/"static-link" features would. Revisit to "bundled"
+# if a dev environment without system SDL2 ever needs to build this.
+sdl2 = "0.38"
+
+[dev-dependencies]
+# Only used by the Phase 4 milestone's screenshot integration test, to
+# save a captured frame as a real image file for visual review — not a
+# runtime/gameplay dependency.
+png = "0.17"
+
+[profile.dev]
+# The original's fixed-point/angle math relies on C's wrapping int
+# arithmetic in many places; overflow checks would turn those into
+# panics in a debug build that the C engine silently tolerates.
+overflow-checks = false
+# The engine does real per-frame simulation/rendering work; an unoptimized
+# dev build is unplayably slow once gameplay/rendering land.
+opt-level = 1
+
+[profile.release]
+lto = true
